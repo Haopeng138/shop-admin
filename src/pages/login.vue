@@ -17,10 +17,18 @@
                 </div>
                 <el-form :model="form" class="w-[250px]">
                     <el-form-item >
-                        <el-input v-model="form.username" placeholder="Nombre de usuario" />
+                        <el-input v-model="form.username" placeholder="Nombre de usuario">
+                            <template #prefix>
+                                <el-icon class="el-input__icon"><User></User></el-icon>        
+                            </template>
+                        </el-input>
                     </el-form-item>
                     <el-form-item >
-                        <el-input v-model="form.password" placeholder="Contraseña" />
+                        <el-input v-model="form.password" placeholder="Contraseña"> 
+                            <template #prefix>
+                                <el-icon class="el-input__icon"><Lock></Lock></el-icon>        
+                            </template>
+                        </el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button round color="#626aef" class="w-[250px]" type="primary" @click="onSubmit">Login</el-button>
@@ -33,7 +41,6 @@
 
 <script setup>
 import { reactive } from 'vue'
-
 // do not use same name with ref
 const form = reactive({
     username:"",
