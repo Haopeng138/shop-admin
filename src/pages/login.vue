@@ -41,11 +41,11 @@
 </template>
 
 <script setup>
-import { reactive,ref} from 'vue'
+import { reactive,ref,onMounted,onBeforeUnmount} from 'vue'
 import { toast } from "~/composables/util";
 import { useRouter } from 'vue-router';
 import {useStore } from 'vuex'
-import {setToken} from '~/composables/auth'
+
 const store = useStore()
 const router = useRouter()
 // do not use same name with ref
@@ -72,24 +72,32 @@ const onSubmit = () => {
             return false
         }
         loading.value = true
-        login(form.username,form.password).then(res=>{
-            console.log(res)
-            // Notice
+        store.dispatch("login",form).then(res=>{
             toast("Logueado")
-
-            // save token
-            setToken(res.token)
-    
-            router.push('/')
-
-        }).catch(err=>{
-            
+            router.push("/")
         }).finally(()=>{
-        loading.value = false
-    })
-        
+            loading.value = false
+        })        
     })
 }
+
+
+// 
+
+// keyevent 
+
+function onKeyUp(e){
+    if (e.key == "Enter") onSubmit()
+}
+
+onMounted(()=>{
+    document.addEventListener("keyup",onKeyUp);
+})
+
+// Remove "enter" key event listener
+onBeforeUnmount(()=>{
+    document.removeEventListener("keyup")
+})
 </script>
 
 <style scoped>
