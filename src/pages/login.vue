@@ -31,7 +31,8 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button round color="#626aef" class="w-[250px]" type="primary" @click="onSubmit">Login</el-button>
+                        <el-button round color="#626aef" class="w-[250px]" 
+                        type="primary" @click="onSubmit" :loading="loading">Login</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -63,12 +64,13 @@ const rules = {
 }
 
 const formRef = ref(null)
-
+const loading = ref(false)
 const onSubmit = () => {
     formRef.value.validate((valid)=>{
         if (!valid){
             return false
         }
+        loading.value = true
         login(form.username,form.password).then(res=>{
             console.log(res)
             ElNotification({
@@ -87,7 +89,10 @@ const onSubmit = () => {
 
         }).catch(err=>{
             
-        })
+        }).finally(()=>{
+        loading.value = false
+    })
+        
     })
 }
 </script>
