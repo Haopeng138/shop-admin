@@ -43,10 +43,9 @@
 <script setup>
 import { reactive,ref} from 'vue'
 import {login,getinfo}  from '~/api/manager'
-import { ElNotification } from 'element-plus'
+import { toast } from "~/composables/util";
 import { useRouter } from 'vue-router';
-import {useCookies} from'@vueuse/integrations/useCookies'
-const cookie = useCookies()
+import {setToken} from '~/composables/auth'
 const router = useRouter()
 // do not use same name with ref
 const form = reactive({
@@ -54,6 +53,7 @@ const form = reactive({
     password:""
 })
 
+// Form rules
 const rules = {
     username:[
         { required: true, message: 'No puedes dejarlo vacio', trigger: 'blur' },
@@ -73,14 +73,12 @@ const onSubmit = () => {
         loading.value = true
         login(form.username,form.password).then(res=>{
             console.log(res)
-            ElNotification({
-                message: "Logueado",
-                type: 'success',
-                duration:3000
-            })
+            // Notice
+            toast("Logueado")
 
-            const cookie = useCookies()
-            cookie.set("admin-token",res.token)
+            // save token
+            setToken(res.token)
+    
 
             getinfo().then(res2=>{
                 console.log(res2)

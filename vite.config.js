@@ -6,6 +6,7 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   base:'/shop-admin/',
+  // This part is for 
   resolve:{
     alias:{
       "~":path.resolve(__dirname,"src")

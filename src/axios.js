@@ -1,14 +1,14 @@
 import axios from "axios";
-import { ElNotification } from "element-plus";
-import { useCookies } from "@vueuse/integrations/useCookies";
+import { toast } from "~/composables/util";
+import { getToken} from "~/composables/auth";
 const service = axios.create({
     baseURL: "/api"
 })
 
 service.interceptors.request.use(function (config) {
     // Do something before request is sent
-    const cookie = useCookies()
-    const token = cookie.get("admin-token")
+   
+    const token = getToken()
     if (token){
         config.headers["token"] = token
     }
@@ -26,11 +26,7 @@ service.interceptors.response.use(function (response) {
   }, function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    ElNotification({
-        message: error.response.data.msg || "Fail",
-        type: 'error',
-        duration:3000
-    })
+    toast(error.response.data.msg || "Fail",'error')
     return Promise.reject(error);
   });
 
