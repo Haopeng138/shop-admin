@@ -15,16 +15,16 @@
                     <span >Acceso</span>
                     <span class="line"></span>
                 </div>
-                <el-form :model="form" class="w-[250px]">
-                    <el-form-item >
+                <el-form ref="formRef" :rules="rules" :model="form" class="w-[250px]">
+                    <el-form-item prop="username">
                         <el-input v-model="form.username" placeholder="Nombre de usuario">
                             <template #prefix>
                                 <el-icon class="el-input__icon"><User></User></el-icon>        
                             </template>
                         </el-input>
                     </el-form-item>
-                    <el-form-item >
-                        <el-input v-model="form.password" placeholder="Contraseña"> 
+                    <el-form-item prop="password">
+                        <el-input type="password" v-model="form.password" placeholder="Contraseña" show-password> 
                             <template #prefix>
                                 <el-icon class="el-input__icon"><Lock></Lock></el-icon>        
                             </template>
@@ -40,15 +40,55 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive,ref} from 'vue'
+import {login,getinfo}  from '~/api/manager'
+import { ElNotification } from 'element-plus'
+import { useRouter } from 'vue-router';
+import {useCookies} from'@vueuse/integrations/useCookies'
+const cookie = useCookies()
+const router = useRouter()
 // do not use same name with ref
 const form = reactive({
     username:"",
     password:""
 })
 
+const rules = {
+    username:[
+        { required: true, message: 'No puedes dejarlo vacio', trigger: 'blur' },
+    ],
+    password:[
+        { required: true, message: 'No puedes dejarlo vacio', trigger: 'blur' },
+    ]
+}
+
+const formRef = ref(null)
+
 const onSubmit = () => {
-  console.log('submit!')
+    formRef.value.validate((valid)=>{
+        if (!valid){
+            return false
+        }
+        login(form.username,form.password).then(res=>{
+            console.log(res)
+            ElNotification({
+                message: "Logueado",
+                type: 'success',
+                duration:3000
+            })
+
+            const cookie = useCookies()
+            cookie.set("admin-token",res.token)
+
+            getinfo().then(res2=>{
+                console.log(res2)
+            })
+            router.push('/')
+
+        }).catch(err=>{
+            
+        })
+    })
 }
 </script>
 
